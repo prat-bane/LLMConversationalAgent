@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package gRPC;
+
+option java_package = "gRPCService";
+option java_multiple_files = true;
+
+message TextGenerationRequest {
+  string text = 1;
+}
+
+message TextGenerationResponse {
+  string generated_text = 1;
+  ResponseMetadata metadata = 2;
+}
+
+message ResponseMetadata {
+  int64 timestamp = 1;
+  int32 query_length = 2;
+  int32 response_length = 3;
+  int64 processing_time_ms = 4;
+}
+
+service LambdaService {
+  rpc GenerateText (TextGenerationRequest) returns (TextGenerationResponse);
+}
