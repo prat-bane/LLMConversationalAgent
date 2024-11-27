@@ -51,7 +51,7 @@ class ConversationManager(
           )
           _ = {
             conversationHistory = turn :: conversationHistory
-            logger.info(s"Recorded conversation turn: $turn")
+            //logger.debug(s"Recorded conversation turn: $turn")
           }
 
           // Format next query and continue conversation
