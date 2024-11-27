@@ -19,7 +19,11 @@ libraryDependencies ++= Seq(
   "com.typesafe.akka" %% "akka-http" % AkkaHttpVersion,
   "com.typesafe.akka" %% "akka-http-spray-json" % AkkaHttpVersion,
   "com.typesafe" % "config" % "1.4.2",
-  "org.slf4j" % "slf4j-simple" % "2.0.13",
+
+  // Logging dependencies
+  "ch.qos.logback" % "logback-classic" % "1.4.7",
+  "com.typesafe.scala-logging" %% "scala-logging" % "3.9.5",
+  "org.slf4j" % "slf4j-api" % "2.0.7",
 
   //gRPC
   // gRPC dependencies
@@ -50,7 +54,13 @@ libraryDependencies ++= Seq(
 )
 
 assembly / assemblyMergeStrategy := {
-  case PathList("META-INF", xs @ _*) => MergeStrategy.discard
+  case "reference.conf" => MergeStrategy.concat
+  case "application.conf" => MergeStrategy.concat
+  case "logback.xml" => MergeStrategy.first
+  case PathList("META-INF", xs @ _*) => xs match {
+    case "MANIFEST.MF" :: Nil => MergeStrategy.discard
+    case _ => MergeStrategy.first
+  }
   case x => MergeStrategy.first
 }
 
