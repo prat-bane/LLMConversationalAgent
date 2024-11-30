@@ -3,7 +3,7 @@ import akka.actor.typed.scaladsl.Behaviors
 import akka.http.scaladsl.Http
 import com.typesafe.config.ConfigFactory
 import org.slf4j.LoggerFactory
-import service.{LLMRoutes, LLMService}
+import service.{APIGatewayService, LLMRoutes, LLMService}
 
 import scala.concurrent.duration.DurationInt
 import scala.concurrent.{Await, ExecutionContext, Future}
@@ -19,8 +19,9 @@ object Main {
     val config = ConfigFactory.load()
     val interface = config.getString("http.interface")
     val port = config.getInt("http.port")
+    val apiGatewayService = new APIGatewayService(config)
 
-    val llmService = new LLMService(config)
+    val llmService = new LLMService(config,apiGatewayService)
     val routes = new LLMRoutes(llmService)
 
     val bindingFuture = Http().newServerAt(interface, port).bind(routes.routes)

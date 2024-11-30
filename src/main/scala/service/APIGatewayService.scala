@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory
 
 class APIGatewayService(config: Config)(implicit ec: ExecutionContext) {
   private val logger = LoggerFactory.getLogger(this.getClass)
-  private val apiGatewayUrl = config.getString("aws.api.gateway.url")
+  private val apiGatewayUrl = config.getString("api.gateway.url")
 
   def generateText(prompt: String)(implicit system: ActorSystem[_]): Future[String] = {
     logger.info(s"Preparing gRPC-like request with prompt: $prompt")
@@ -30,7 +30,7 @@ class APIGatewayService(config: Config)(implicit ec: ExecutionContext) {
     val serializedRequest = request.toByteArray
     logger.debug(s"Serialized request size: ${serializedRequest.length} bytes")
 
-    // Create the request JSON with serialized protobuf as base64
+    // Create the request with serialized protobuf as base64
     val requestJson = JsObject(
       "body" -> JsString(java.util.Base64.getEncoder.encodeToString(serializedRequest))
     ).toString()
@@ -38,10 +38,10 @@ class APIGatewayService(config: Config)(implicit ec: ExecutionContext) {
     val httpRequest = HttpRequest(
       method = HttpMethods.POST,
       uri = apiGatewayUrl,
-      entity = HttpEntity(
-        ContentTypes.`application/json`,
-        requestJson
-      )
+      entity = HttpEntity(ContentTypes.`application/json`, requestJson)
+    ).withHeaders(
+      headers.RawHeader("Accept", "application/grpc+proto"),
+      headers.RawHeader("Content-Type", "application/grpc+proto")
     )
 
     Http()(system)
@@ -65,6 +65,7 @@ class APIGatewayService(config: Config)(implicit ec: ExecutionContext) {
                 try {
                   // Parse the Protocol Buffer response
                   val response = TextGenerationResponse.parseFrom(bytes)
+                  logger.debug(s"Response metadata: ${response.metadata}")
                   response.generatedText
                 } catch {
                   case e: Exception =>

@@ -21,9 +21,9 @@ libraryDependencies ++= Seq(
   "com.typesafe" % "config" % "1.4.2",
 
   // Logging dependencies
-  "ch.qos.logback" % "logback-classic" % "1.4.7",
+  "ch.qos.logback" % "logback-classic" % "1.2.11", // This version works with Java 8
+  "org.slf4j" % "slf4j-api" % "1.7.36",
   "com.typesafe.scala-logging" %% "scala-logging" % "3.9.5",
-  "org.slf4j" % "slf4j-api" % "2.0.7",
 
   //gRPC
   // gRPC dependencies
@@ -44,11 +44,10 @@ libraryDependencies ++= Seq(
   "org.scala-lang.modules" %% "scala-collection-compat" % "2.10.0",
   "com.fasterxml.jackson.core" % "jackson-databind" % "2.14.2",
 
-  //ollama
-  "io.github.ollama4j" % "ollama4j" % "1.0.79",
-
   // Testing
   "org.scalatest" %% "scalatest" % "3.2.15" % Test,
+  "org.scalatestplus" %% "mockito-4-6" % "3.2.15.0" % Test,
+  "com.typesafe.akka" %% "akka-actor-testkit-typed" % AkkaVersion % Test,
   "com.typesafe.akka" %% "akka-http-testkit" % AkkaHttpVersion % Test,
   "com.typesafe.akka" %% "akka-stream-testkit" % AkkaVersion % Test
 )
