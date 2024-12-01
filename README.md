@@ -11,7 +11,7 @@ A streamlined Scala-based implementation of a text generation server using AWS B
 
 Related Applications
 
-LLM Conversational Agent Client - Client application that interacts with this server
+[LLM Conversational Agent Client](https://github.com/prat-bane/LLMConversationalAgentClient) - Client application that interacts with this server
 
 ## System Flow
 
