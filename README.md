@@ -7,6 +7,43 @@
 
 A streamlined Scala-based implementation of a text generation server using AWS Bedrock (Titan) through API Gateway and Lambda, built with Akka HTTP.
 
+
+Related Applications
+
+LLM Conversational Agent Client - Client application that interacts with this server
+
+## System Flow
+
+![System Architecture](System%20Flow.png)
+
+The system architecture diagram shows the flow of requests through the dockerized components and AWS services. The numbers indicate the sequence of operations:
+
+Query: Client sends request to EC2 Server
+Forward: EC2 forwards to API Gateway
+Invoke: API Gateway triggers Lambda
+Generate: Lambda calls Bedrock
+Response: Bedrock returns generated text
+Return: Response flows back through Lambda
+Response: API Gateway returns to EC2
+Response: EC2 returns to Client
+Process: Client processes with Ollama
+Next Query: New query generated
+1. **Client Request**: 
+   - Client sends a POST request to `/api/v1/chat` with a query
+   - Request is handled by Akka HTTP server
+
+2. **Server Processing**:
+   - `LLMRoutes` receives the request and validates the input
+   - Query is passed to `LLMService`
+   - `APIGatewayService` prepares the gRPC request
+
+3. **AWS Integration**:
+   - Request is sent to API Gateway
+   - Lambda function is triggered
+   - Lambda calls Bedrock for text generation
+   - Response is returned through the same path
+
+
 ## Prerequisites
 
 - Scala 2.13.10
@@ -40,6 +77,9 @@ src/
 │       ├── application.conf               # Configuration file
 │       └── logback.xml                    # Logging configuration
 ```
+
+
+
 
 ## Configuration
 
@@ -130,23 +170,6 @@ Response:
 }
 ```
 
-## System Flow
-
-![System Architecture](System%20Flow.png)
-1. **Client Request**: 
-   - Client sends a POST request to `/api/v1/chat` with a query
-   - Request is handled by Akka HTTP server
-
-2. **Server Processing**:
-   - `LLMRoutes` receives the request and validates the input
-   - Query is passed to `LLMService`
-   - `APIGatewayService` prepares the gRPC request
-
-3. **AWS Integration**:
-   - Request is sent to API Gateway
-   - Lambda function is triggered
-   - Lambda calls Bedrock for text generation
-   - Response is returned through the same path
 
 ## Building and Running
 
