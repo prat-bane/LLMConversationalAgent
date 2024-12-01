@@ -132,6 +132,7 @@ Response:
 
 ## System Flow
 
+![System Architecture]([docs/system-architecture.png](https://github.com/prat-bane/LLMConversationalAgent/blob/master/System%20Flow.png))
 1. **Client Request**: 
    - Client sends a POST request to `/api/v1/chat` with a query
    - Request is handled by Akka HTTP server
