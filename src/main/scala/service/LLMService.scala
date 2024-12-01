@@ -4,7 +4,7 @@ import akka.actor.typed.ActorSystem
 import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
-import com.typesafe.config.Config
+import com.typesafe.config.{Config, ConfigFactory}
 import org.slf4j.LoggerFactory
 import spray.json._
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport._
@@ -52,11 +52,15 @@ class LLMService(config: Config, apiGatewayService:APIGatewayService)(implicit e
 class LLMRoutes(llmService: LLMService)(implicit system: ActorSystem[_], ec: ExecutionContext) {
   import JsonProtocol._
   private val logger = LoggerFactory.getLogger(this.getClass)
+  private val config = ConfigFactory.load()
+  private val apiPrefix = config.getString("api.prefix")
+  private val apiVersion = config.getString("api.version")
+  private val chatEndpoint = config.getString("api.endpoints.chat")
 
 
   val routes: Route = {
-    pathPrefix("api" / "v1") {
-      path("chat") {
+    pathPrefix(apiPrefix / apiVersion) {
+      path(chatEndpoint) {
         post {
           entity(as[Query]) { query =>
             onComplete(llmService.generateResponse(query.text)) {

@@ -21,9 +21,9 @@ libraryDependencies ++= Seq(
   "com.typesafe" % "config" % "1.4.2",
 
   // Logging dependencies
-  "ch.qos.logback" % "logback-classic" % "1.2.11", // This version works with Java 8
-  "org.slf4j" % "slf4j-api" % "1.7.36",
+  "ch.qos.logback" % "logback-classic" % "1.4.7",
   "com.typesafe.scala-logging" %% "scala-logging" % "3.9.5",
+  "org.slf4j" % "slf4j-api" % "2.0.7",
 
   //gRPC
   // gRPC dependencies

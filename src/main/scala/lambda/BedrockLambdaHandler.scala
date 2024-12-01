@@ -8,6 +8,7 @@ import software.amazon.awssdk.http.apache.ApacheHttpClient
 import software.amazon.awssdk.http.SdkHttpClient
 import com.fasterxml.jackson.databind.{JsonNode, ObjectMapper}
 import com.fasterxml.jackson.core.JsonProcessingException
+import com.typesafe.config.ConfigFactory
 import gRPCService.lambda.{ResponseMetadata, TextGenerationRequest, TextGenerationResponse}
 import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider
 import software.amazon.awssdk.regions.Region
@@ -17,10 +18,11 @@ import scala.util.{Failure, Success, Try}
 
 class BedrockLambdaHandler extends RequestHandler[java.util.Map[String, Object], java.util.Map[String, Object]] {
   private val mapper = new ObjectMapper()
+  private val config = ConfigFactory.load()
 
   private lazy val sdkHttpClient: SdkHttpClient = {
     ApacheHttpClient.builder()
-      .maxConnections(50)
+      .maxConnections(config.getInt("bedrock.http.maxConnections"))
       .build()
   }
 
@@ -52,9 +54,9 @@ class BedrockLambdaHandler extends RequestHandler[java.util.Map[String, Object],
       bedrockRequestJson.put("inputText", text)
 
       val configNode = bedrockRequestJson.putObject("textGenerationConfig")
-      configNode.put("temperature", 0.7)
-      configNode.put("topP", 0.9)
-      configNode.put("maxTokenCount", 50)
+      configNode.put("temperature", config.getDouble("bedrock.model.config.temperature"))
+      configNode.put("topP", config.getDouble("bedrock.model.config.topP"))
+      configNode.put("maxTokenCount", config.getInt("bedrock.model.config.maxTokenCount"))
       configNode.put("stopSequences", mapper.createArrayNode())
 
       val startTime = System.currentTimeMillis()
